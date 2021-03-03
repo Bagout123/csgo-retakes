@@ -11,6 +11,29 @@ stock ArrayList Queue_Init() {
     return queueHandle;
 }
 
+stock void Queue_InsertVip(ArrayList queueHandle, int client){
+    if (Queue_IsEmpty(queueHandle)){
+        Queue_Enqueue(queueHandle, client);
+        return;
+    }
+    else{
+        if (Queue_Find(queueHandle, client) == -1)
+        {
+            int iVipQueue = 0;
+            for (int n; n<queueHandle.Length; n++)
+            {
+                PrintToChat(client, "%d. %N", n, queueHandle.Get(n));
+                if (GetUserFlagBits(queueHandle.Get(n)) & ADMFLAG_CUSTOM6){
+                    iVipQueue++;
+                }
+            }
+            queueHandle.ShiftUp(iVipQueue);
+            queueHandle.Set(iVipQueue, client);
+            PrintToChat(client, "%d, %d", queueHandle.Length, iVipQueue);    
+        }
+    }
+}
+
 /**
  * Push a Client to the end of the Queue (don't add a client if already in queue).
  */

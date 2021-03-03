@@ -388,7 +388,6 @@ public Action Command_JoinTeam(int client, const char[] command, int argc) {
         if (   (team_from == CS_TEAM_CT && team_to == CS_TEAM_T )
             || (team_from == CS_TEAM_T  && team_to == CS_TEAM_CT)) {
             return Plugin_Handled;
-
         } else if (team_to == CS_TEAM_SPECTATOR) {
             // voluntarily joining spectator will not put you in the queue
             SwitchPlayerTeam(client, CS_TEAM_SPECTATOR);
@@ -424,8 +423,14 @@ public Action PlacePlayer(int client) {
     }
 
     ChangeClientTeam(client, CS_TEAM_SPECTATOR);
-    Queue_Enqueue(g_hWaitingQueue, client);
-    Retakes_Message(client, "%t", "JoinedQueueMessage");
+    
+    if (GetUserFlagBits(client) & ADMFLAG_CUSTOM6) {
+        Queue_InsertVip(g_hWaitingQueue, client);
+        Retakes_Message(client, "You have been placed further up in the queue as a result of your VIP");
+    }
+    else {
+        Queue_Enqueue(g_hWaitingQueue, client);
+        Retakes_Message(client, "%t", "JoinedQueueMessage");}
     return Plugin_Handled;
 }
 
